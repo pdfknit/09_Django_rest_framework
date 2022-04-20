@@ -1,6 +1,5 @@
 from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
-# from django.utils import timezone
 
 
 class TODO_User(AbstractBaseUser):
@@ -15,6 +14,7 @@ class TODO_User(AbstractBaseUser):
     def __str__(self):
         return f'{self.firstname} {self.lastname}'
 
+
 class Project(models.Model):
     name = models.CharField(max_length=64, verbose_name="Название проекта", unique=True)
     link = models.URLField(max_length=256, verbose_name="Ссылка", blank=True)
@@ -23,6 +23,7 @@ class Project(models.Model):
     def __str__(self):
         return f'{self.name}'
 
+
 class TODO(models.Model):
     name = models.CharField(max_length=64, verbose_name="Название заметки", unique=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE, verbose_name="Проект")
@@ -30,19 +31,10 @@ class TODO(models.Model):
     created = models.DateTimeField(verbose_name="Создана", auto_now_add=True)
     updated = models.DateTimeField(verbose_name="Создана", auto_now=True)
     link = models.URLField(max_length=256, verbose_name="Ссылка", blank=True)
-    # creator = models.ForeignKey(TODO_User, verbose_name="Создатель", on_delete=models.CASCADE)
-    executor = models.ForeignKey(TODO_User, verbose_name="Создатель", on_delete=models.CASCADE, blank=True, default=None)
+    executor = models.ForeignKey(TODO_User, verbose_name="Создатель", on_delete=models.CASCADE, blank=True,
+                                 default=None)
     is_active = models.BooleanField(default=True, verbose_name="Активный")
-# В проекте создать новое приложение для работы с TO DO.
-#  Добавить модель Project. Это проект, для которого записаны TO DO. У него есть название,
-# может быть ссылка на репозиторий и набор пользователей, которые работают с этим
-# проектом. Создать модель, выбрать подходящие типы полей и связей с другими моделями.
+    is_delete = models.BooleanField(default=False, verbose_name="Удален")
 
-# 3. Добавить модель TO DO. Это заметка. У To Do есть проект, в котором сделана заметка, текст
-# заметки, дата создания и обновления, пользователь, создавший заметку. Содержится и
-# признак — активно TODO или закрыто. Выбрать подходящие типы полей и связей с другими
-# моделями.
-
-# 4. Создать API для моделей Projects и ToDo. Пока можно использовать ViewSets по аналогии с
-# моделью User.
-# 5. При сериализации моделей выбрать нужный вид для связанных моделей
+    def __str__(self):
+        return f'{self.name}'

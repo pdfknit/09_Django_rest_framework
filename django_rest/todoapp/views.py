@@ -1,18 +1,18 @@
 import io
 
 from django.http import HttpResponse, HttpResponseBadRequest
-from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.mixins import RetrieveModelMixin, UpdateModelMixin, ListModelMixin
 from rest_framework.parsers import JSONParser
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework.renderers import JSONRenderer
 from .models import TODO_User, Project, TODO
 from .serializer import UserModelSerializer, UserSerializer, ProjectModelSerializer, TODOModelSerializer, \
-    ProjectSerializer, TODOSerializer
+    ProjectSerializer, TODOSerializer, TODOAPISerializer
+from rest_framework.pagination import LimitOffsetPagination
 
 
 class UserModelViewSet(ModelViewSet):
-    # renderer_classes = [JSONRenderer, BrowsableAPIRenderer]
     serializer_class = UserModelSerializer
     queryset = TODO_User.objects.all()
 
@@ -27,8 +27,40 @@ class TODOModelViewSet(ModelViewSet):
     queryset = TODO.objects.all()
 
 
-def serializer_httpresponse(element, serializer, many=False):
+class UserAPIViewSet(RetrieveModelMixin, UpdateModelMixin, ListModelMixin, GenericViewSet):
+    serializer_class = UserSerializer
+    queryset = TODO_User.objects.all()
 
+
+class ProjectLimitOffsetPagination(LimitOffsetPagination):
+    default_limit = 10
+
+
+class TODOLimitOffsetPagination(LimitOffsetPagination):
+    default_limit = 20
+
+
+class ProjectAPIViewSet(ModelViewSet):
+    serializer_class = ProjectSerializer
+    queryset = Project.objects.all()
+    pagination_class = ProjectLimitOffsetPagination
+
+    def get_queryset(self):
+        name = self.kwargs['name']
+        return Project.objects.filter(name__contains=name)
+
+
+class TODOAPIViewSet(ModelViewSet):
+    serializer_class = TODOAPISerializer
+    queryset = TODO.objects.all()
+    filterset_fields = ['project']
+    pagination_class = TODOLimitOffsetPagination
+
+    def perform_destroy(self, instance):
+        instance.is_delete = True
+
+
+def serializer_httpresponse(element, serializer, many=False):
     if serializer == "UserSerializer":
         serializer = UserSerializer(element, many=many)
 
@@ -56,9 +88,11 @@ def get_project(request, pk):
     project = Project.objects.get(pk=pk)
     return serializer_httpresponse(project, serializer="ProjectSerializer")
 
+
 def get_all_projects(request):
     projects = Project.objects.all()
     return serializer_httpresponse(projects, serializer="ProjectSerializer", many=True)
+
 
 def get_TODO(request, pk):
     todo = Project.objects.get(pk=pk)
@@ -66,6 +100,7 @@ def get_TODO(request, pk):
     serializer = TODOSerializer(todo)
     data_json = JSONRenderer().render(serializer.data)
     return HttpResponse(data_json)
+
 
 def get_all_TODOs(request):
     all_todos = Project.objects.all()
