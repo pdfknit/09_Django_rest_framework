@@ -29,7 +29,7 @@ class UserSerializer(Serializer):
         return todo_user
 
     def validate_username(self, value):
-        if value < 3:
+        if len(value) < 3:
             raise ValidationError('Слишком короткий юзернейм')
         return value
 
@@ -48,6 +48,16 @@ class ProjectSerializer(Serializer):
 class TODOSerializer(Serializer):
     name = CharField(max_length=64)
     project = ProjectSerializer(required=False, many=True)
+    text = CharField(max_length=512, read_only=True)
+    created = DateTimeField(format=api_settings.DATETIME_FORMAT, required=False)
+    updated = DateTimeField(format=api_settings.DATETIME_FORMAT, required=False)
+    link = URLField(max_length=256, allow_blank=True, required=False)
+    executor = UserSerializer(required=False)
+    is_active = BooleanField(default=True)
+
+class TODOAPISerializer(Serializer):
+    name = CharField(max_length=64)
+    project = ProjectSerializer(required=False)
     text = CharField(max_length=512, read_only=True)
     created = DateTimeField(format=api_settings.DATETIME_FORMAT, required=False)
     updated = DateTimeField(format=api_settings.DATETIME_FORMAT, required=False)
