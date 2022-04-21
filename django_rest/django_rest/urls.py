@@ -18,12 +18,17 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from todoapp.views import *
 
+
 router = DefaultRouter()
 router.register('users', UserAPIViewSet)
 router.register('projects', ProjectAPIViewSet)
 router.register('todos', TODOAPIViewSet)
+router.register('basic-project', ProjectModelViewSet)
+router.register('basic-todo', TODOModelViewSet)
+router.register('basic-user', UserModelViewSet)
 
 urlpatterns = [
+
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('user/get/<int:pk>/', get_user),
@@ -33,5 +38,5 @@ urlpatterns = [
     path('project/get/', get_all_projects),
     path('todo/get/<int:pk>/', get_TODO),
     path('todo/get/', get_all_TODOs),
-    path('projects/filters/<str:name>/', ProjectAPIViewSet.as_view({'get': 'list'}))
+    path('projects/filters/<str:name>/', ProjectAPIViewSet.as_view({'get': 'list'})),
 ]

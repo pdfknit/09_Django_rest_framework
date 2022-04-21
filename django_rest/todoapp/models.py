@@ -3,6 +3,7 @@ from django.db import models
 
 
 class TODO_User(AbstractBaseUser):
+    id = models.AutoField(auto_created=True, primary_key=True, serialize=True, verbose_name='ID')
     username = models.CharField(max_length=24, verbose_name="Юзернейм", unique=True)
     firstname = models.CharField(max_length=64, verbose_name="Имя")
     lastname = models.CharField(max_length=64, verbose_name="Фамилия")

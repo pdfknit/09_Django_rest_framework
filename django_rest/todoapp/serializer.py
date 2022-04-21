@@ -42,7 +42,7 @@ class UserSerializer(Serializer):
 class ProjectSerializer(Serializer):
     name = CharField(max_length=24)
     link = CharField(max_length=256)
-    users = UserSerializer(many=True)
+    # users = UserSerializer(many=True)
 
 
 class TODOSerializer(Serializer):
@@ -69,11 +69,11 @@ class TODOAPISerializer(Serializer):
 class UserModelSerializer(ModelSerializer):
     class Meta:
         model = TODO_User
-        fields = ['username', 'firstname', 'lastname', 'email', 'phone', ]
+        fields = ['id', 'username', 'firstname', 'lastname', 'email', 'phone', ]
 
 
 class ProjectModelSerializer(ModelSerializer):
-    users = StringRelatedField(many=True)
+    # users = StringRelatedField(many=True)
 
     class Meta:
         model = Project
@@ -81,8 +81,8 @@ class ProjectModelSerializer(ModelSerializer):
 
 
 class TODOModelSerializer(ModelSerializer):
-    project = StringRelatedField()
-    executor = StringRelatedField()
+    # project = StringRelatedField()
+    # executor = StringRelatedField()
     class Meta:
         model = TODO
         fields = '__all__'
