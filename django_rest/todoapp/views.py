@@ -43,18 +43,18 @@ class TODOLimitOffsetPagination(LimitOffsetPagination):
 class ProjectAPIViewSet(ModelViewSet):
     serializer_class = ProjectSerializer
     queryset = Project.objects.all()
-    pagination_class = ProjectLimitOffsetPagination
+    # pagination_class = ProjectLimitOffsetPagination
 
-    def get_queryset(self):
-        name = self.kwargs['name']
-        return Project.objects.filter(name__contains=name)
+    # def get_queryset(self):
+    #     name = self.kwargs['name']
+    #     return Project.objects.filter(name__contains=name)
 
 
 class TODOAPIViewSet(ModelViewSet):
     serializer_class = TODOAPISerializer
     queryset = TODO.objects.all()
     filterset_fields = ['project']
-    pagination_class = TODOLimitOffsetPagination
+    # pagination_class = TODOLimitOffsetPagination
 
     def perform_destroy(self, instance):
         instance.is_delete = True
@@ -127,3 +127,16 @@ def post_user(request):
         return serializer_httpresponse(todo_user)
     else:
         return HttpResponseBadRequest(JSONRenderer().render(serializer.errors))
+
+
+class ProjectModelViewSet(ModelViewSet):
+    queryset = Project.objects.all()
+    serializer_class = ProjectModelSerializer
+
+class TODOModelViewSet(ModelViewSet):
+    queryset = TODO.objects.all()
+    serializer_class = TODOModelSerializer
+
+class UserModelViewSet(ModelViewSet):
+    queryset = TODO_User.objects.all()
+    serializer_class = UserModelSerializer
