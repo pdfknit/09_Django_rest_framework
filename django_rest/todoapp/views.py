@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.mixins import RetrieveModelMixin, UpdateModelMixin, ListModelMixin
 from rest_framework.parsers import JSONParser
+from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.renderers import JSONRenderer
 from .models import TODO_User, Project, TODO
@@ -12,7 +13,9 @@ from .serializer import UserModelSerializer, UserSerializer, ProjectModelSeriali
 from rest_framework.pagination import LimitOffsetPagination
 
 
+
 class UserModelViewSet(ModelViewSet):
+    permission_classes = [DjangoModelPermissions]
     serializer_class = UserModelSerializer
     queryset = TODO_User.objects.all()
 
