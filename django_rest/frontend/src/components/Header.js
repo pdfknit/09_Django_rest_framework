@@ -4,9 +4,13 @@ import {
     Container,
     Heading, Nav, Element,
 } from "./HeaderFooterStyles.js";
-import {Link} from "react-router-dom"
+import {Link} from "react-router-dom";
+
 
 const Header = () => {
+    function logout(){
+        return ''
+    }
     return (
         <HeaderBox>
             <Container>
@@ -16,10 +20,14 @@ const Header = () => {
                     <Element><Link to="/users">Users</Link></Element>
                     <Element><Link to="/projects">Projects</Link></Element>
                     <Element><Link to="/todos">TODOs</Link></Element>
+                    {/*<Element>*/}
+                    {/*    /!*{ this.isAuth() ? <button onClick={()=>logout()}>Logout</button> : <Link to='/login'>Login</Link> }*!/*/}
+                    {/*    {this.isAuth() ? <button>Logout</button> : <Link to='/login'>Login</Link>}*/}
+                    {/*</Element>*/}
                 </Nav>
-        </Container>
-</HeaderBox>
-)
-    ;
+            </Container>
+        </HeaderBox>
+    )
+        ;
 };
 export default Header;
