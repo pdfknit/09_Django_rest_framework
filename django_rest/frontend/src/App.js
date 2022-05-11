@@ -9,7 +9,8 @@ import axios from 'axios'
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Page404 from "./components/404";
-import {Route, Routes, BrowserRouter} from "react-router-dom"
+import {Route, Routes, BrowserRouter, Link} from "react-router-dom"
+import LoginForm from "./components/LoginForm";
 
 
 class App extends React.Component {
@@ -20,34 +21,105 @@ class App extends React.Component {
             'users': [],
             'projects': [],
             'todos': [],
+            'token': '',
         }
     }
 
+    get_token(username, password) {
+        axios.post('http://127.0.0.1:8000/api-auth-token/', {
+            username: username,
+            password: password
+        })
+            .then(response => {
+                console.log(response.data)
+            }).catch(error => alert('Неверный логин или пароль'))
+    }
+
+    obtainAuthToken(login, password) {
+        // console.log('obtainAuthToken: ' + login)
+        axios.post('http://127.0.0.1:8000/api-auth-token/', {username: login, password: password})
+            .then(response => {
+                const token = response.data.token
+                console.log('Token: ' + token)
+                localStorage.setItem('token', token)
+                this.setState({
+                    'token': token
+                }, this.getData)
+            })
+            .catch(error => console.log(error))
+    }
+
     componentDidMount() {
-        axios.get('http://127.0.0.1:8000/api/basic-user/')
+        let token = localStorage.getItem('token')
+        this.setState({
+            'token': token
+        }, this.getData)
+    }
+
+    isAuth() {
+        return !!this.state.token
+    }
+
+
+    logout(){
+        localStorage.setItem('token', '')
+        this.setState({
+            'token': ''
+        }, this.getData)
+    }
+
+    getHeaders() {
+        if (this.isAuth()) {
+            return {
+                'Authorization': 'Token ' + this.state.token
+            }
+        }
+        return {}
+    }
+
+    getData() {
+        let headers = this.getHeaders()
+        console.log(headers)
+
+        axios.get('http://127.0.0.1:8000/api/basic-user/', {headers})
             .then(response => {
                 const users = response.data
                 this.setState({
                     'users': users
                 })
             })
-            .catch(error => console.log(error))
-        axios.get('http://127.0.0.1:8000/api/basic-project/')
+            .catch(error => {
+                console.log(error)
+                this.setState({
+                    'users': []
+                })
+            })
+        axios.get('http://127.0.0.1:8000/api/basic-project/', {headers})
             .then(response => {
                 const projects = response.data
                 this.setState({
                     'projects': projects
                 })
             })
-            .catch(error => console.log(error))
-        axios.get('http://localhost:8000/api/basic-todo/')
+            .catch(error => {
+                console.log(error)
+                this.setState({
+                    'projects': []
+                })
+            })
+        axios.get('http://localhost:8000/api/basic-todo/', {headers})
             .then(response => {
                 const todos = response.data
                 this.setState({
                     'todos': todos
                 })
             })
-            .catch(error => console.log(error))
+            .catch(error => {
+                console.log(error)
+                this.setState({
+                    'todos': []
+                })
+            })
     }
 
     render() {
@@ -55,7 +127,12 @@ class App extends React.Component {
             <div>
                 <BrowserRouter>
                     <Header/>
+                    <div> {this.isAuth() ? <button class = "logout" onClick={() => this.logout()}>Logout</button> :
+                        <Link to='/login' class = "logout">Login</Link>}</div>
                     <Routes>
+                        {/*<Route exact path='/login2' component={() => <LoginForm />} />*/}
+                        <Route exact path='/login' element={<LoginForm
+                            obtainAuthToken={(login, password) => this.obtainAuthToken(login, password)}/>}/>
                         <Route exact path='/' element={
                             <div>
                                 <UserList users={this.state.users}/>
@@ -64,21 +141,23 @@ class App extends React.Component {
                             </div>
                         }/>
                         <Route exact path='/users' element={
-                            <div> <UserList users={this.state.users}/> </div>
+                            <div><UserList users={this.state.users}/></div>
                         }/>
                         <Route exact path='/projects' element={
-                            <div> <ProjectList projects={this.state.projects}/></div>
+                            <div><ProjectList projects={this.state.projects}/></div>
                         }/>
                         <Route exact path='/users/projects/:id' element={
-                            <div> <UsersProjectList projects={this.state.projects}/></div>
+                            <div><UsersProjectList projects={this.state.projects}/></div>
                         }/>
                         <Route exact path='/todos' element={
                             <div><TODOList todos={this.state.todos}/></div>
                         }/>
                         <Route exact path='/projects/todos/:id' element={
-                            <div> <ProjectsTODOList todos={this.state.todos}/></div>
+                            <div><ProjectsTODOList todos={this.state.todos}/></div>
                         }/>
                         <Route path='*' element={<Page404/>}/>
+                        <Route exact path='/login' component={() => <LoginForm
+                            get_token={(username, password) => this.get_token(username, password)}/>}/>
                     </Routes>
                     <Footer/>
                 </BrowserRouter>

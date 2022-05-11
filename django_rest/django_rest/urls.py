@@ -33,7 +33,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls')),
-    path('api-token-auth/', views.obtain_auth_token),
+    path('api-auth-token/', views.obtain_auth_token),
     path('user/get/<int:pk>/', get_user),
     path('user/get/', get_all_users),
     path('user/set/', post_user),
