@@ -10,6 +10,8 @@ class TODO_User(AbstractBaseUser):
     email = models.EmailField(max_length=128, verbose_name="Почта", unique=True)
     image = models.ImageField(verbose_name='Изображение', blank=True, upload_to='products')
     phone = models.CharField(verbose_name="Телефон", max_length=11, blank=True)
+    is_staff = models.BooleanField(default=True, verbose_name="Сотрудник")
+    is_superuser = models.BooleanField(default=False, verbose_name="Суперюзер")
     USERNAME_FIELD = 'username'
 
     def __str__(self):
