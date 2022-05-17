@@ -71,6 +71,10 @@ class UserModelSerializer(ModelSerializer):
         model = TODO_User
         fields = ['id', 'username', 'firstname', 'lastname', 'email', 'phone', ]
 
+class UserModelSerializerV2(ModelSerializer):
+    class Meta:
+        model = TODO_User
+        fields = ['id', 'username', 'firstname', 'lastname', 'email', 'phone', 'is_staff', 'is_superuser', ]
 
 class ProjectModelSerializer(ModelSerializer):
     # users = StringRelatedField(many=True)

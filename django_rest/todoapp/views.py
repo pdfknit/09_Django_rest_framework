@@ -9,14 +9,15 @@ from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.renderers import JSONRenderer
 from .models import TODO_User, Project, TODO
 from .serializer import UserModelSerializer, UserSerializer, ProjectModelSerializer, TODOModelSerializer, \
-    ProjectSerializer, TODOSerializer, TODOAPISerializer
+    ProjectSerializer, TODOSerializer, TODOAPISerializer, UserModelSerializerV2
 from rest_framework.pagination import LimitOffsetPagination
 
 
 
 class UserModelViewSet(ModelViewSet):
     permission_classes = [DjangoModelPermissions]
-    serializer_class = UserModelSerializer
+
+    # serializer_class = UserModelSerializer
     queryset = TODO_User.objects.all()
 
 
@@ -142,4 +143,10 @@ class TODOModelViewSet(ModelViewSet):
 
 class UserModelViewSet(ModelViewSet):
     queryset = TODO_User.objects.all()
-    serializer_class = UserModelSerializer
+    # serializer_class = UserModelSerializer
+
+    def get_serializer_class(self):
+        if self.request.version == '2.0':
+            return UserModelSerializerV2
+        else:
+            return UserModelSerializer
