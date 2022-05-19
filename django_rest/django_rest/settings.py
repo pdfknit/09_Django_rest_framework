@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'graphene_django',
     'django_filters',
     'rest_framework.authtoken',
     'corsheaders',
@@ -151,5 +152,9 @@ REST_FRAMEWORK = {
 
 if DEBUG:
     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
+
+GRAPHENE = {
+    'SCHEMA': 'todoapp.graphene.schema'
+}
 
 # AUTH_USER_MODEL = 'todoapp.TODO_User'
