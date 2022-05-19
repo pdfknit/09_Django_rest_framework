@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
+from graphene_django.views import GraphQLView
 from rest_framework import permissions
 from rest_framework.routers import DefaultRouter
 from todoapp.views import *
@@ -48,6 +49,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls')),
+    path('graphene/', GraphQLView.as_view(graphiql=True)),
     path('api-auth-token/', views.obtain_auth_token),
     path('user/get/<int:pk>/', get_user),
     path('user/get/', get_all_users),

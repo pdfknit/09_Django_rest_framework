@@ -5,6 +5,7 @@ import ProjectList from "./components/Project_list";
 import UsersProjectList from "./components/UsersProject_list";
 import ProjectsTODOList from "./components/ProjectsTODO_list";
 import TODOList from "./components/TODO_list";
+import GraphList from "./components/Graph_list";
 import axios from 'axios'
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -61,7 +62,7 @@ class App extends React.Component {
     }
 
 
-    logout(){
+    logout() {
         localStorage.setItem('token', '')
         this.setState({
             'token': ''
@@ -77,9 +78,34 @@ class App extends React.Component {
         return {}
     }
 
+    // getGraphHeaders() {
+    //     if (this.isAuth()) {
+    //         return {
+    //             'Authorization': 'Token ' + this.state.token,
+    //             'query': 'usersById(pk:1){firstname, lastname, projectSet {name, todoSet {name}}}'
+    //         }
+    //     }
+    //     return {}
+    // }
+
     getData() {
         let headers = this.getHeaders()
-        console.log(headers)
+        let graph_headers = this.getGraphHeaders()
+
+        // axios.post('http://127.0.0.1:8000/graphene/', {graph_headers})
+        //     .then(response => {
+        //         const users_data = response.data
+        //         this.setState({
+        //             'users_data': users_data
+        //         })
+        //         console.log(this.state.users_data)
+        //     })
+        //     .catch(error => {
+        //         console.log(error)
+        //         this.setState({
+        //             'users_data': []
+        //         })
+        //     })
 
         axios.get('http://127.0.0.1:8000/api/basic-user/', {headers})
             .then(response => {
@@ -127,10 +153,9 @@ class App extends React.Component {
             <div>
                 <BrowserRouter>
                     <Header/>
-                    <div> {this.isAuth() ? <button class = "logout" onClick={() => this.logout()}>Logout</button> :
-                        <Link to='/login' class = "logout">Login</Link>}</div>
+                    <div> {this.isAuth() ? <button class="logout" onClick={() => this.logout()}>Logout</button> :
+                        <Link to='/login' class="logout">Login</Link>}</div>
                     <Routes>
-                        {/*<Route exact path='/login2' component={() => <LoginForm />} />*/}
                         <Route exact path='/login' element={<LoginForm
                             obtainAuthToken={(login, password) => this.obtainAuthToken(login, password)}/>}/>
                         <Route exact path='/' element={
@@ -138,11 +163,17 @@ class App extends React.Component {
                                 <UserList users={this.state.users}/>
                                 <ProjectList projects={this.state.projects}/>
                                 <TODOList todos={this.state.todos}/>
+                                {/*<GraphList graph={this.state.users_data}/>*/}
                             </div>
                         }/>
                         <Route exact path='/users' element={
                             <div><UserList users={this.state.users}/></div>
                         }/>
+
+                        {/*<Route exact path='/user_data' element={*/}
+                        {/*    <div><GraphList graphs={this.state.users_data}/></div>*/}
+                        {/*}/>*/}
+
                         <Route exact path='/projects' element={
                             <div><ProjectList projects={this.state.projects}/></div>
                         }/>
